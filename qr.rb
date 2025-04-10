@@ -8,11 +8,27 @@ pp "2. Join a wifi network"
 pp "3. Send a text message"
 pp "Write 4 to exit"
 user_answer=gets.chomp
-user_answer=""
-while user_answer!="4"
-  
-qr_https=qrcode=RQRCode::QRCode.new(user_https)
-#qrcode=RQRCode::QRCode.new("WIFI:T:WPA;S:UPC303;P:"+ ENV.fetch("supersecretpassword") + ";;")
-qrcode=RQRCode::QRCode.new("SMSTO:9876543210:Hi Alice! It's")
-png=qrcode.as_png({:size => 500})
-IO.binwrite("sometext.png", png.to_s)
+if user_answer!= "4"
+  if user_answer == "1"
+    pp "What is the URL you would like to encode?"
+    user_url= gets.chomp
+    qrcode=RQRCode::QRCode.new(user_url)
+  elsif user_answer== "2"
+    pp "What is the name of the wifi network?"
+    user_wifi_name=gets.chomp
+    pp "What is the password?"
+    user_wifi_password=gets.chomp
+    qrcode=RQRCode::QRCode.new("WIFI:T:WPA;S:" + user_wifi_name + ";P:"+ user_wifi_password + ";;")
+  elsif user_answer== "3"
+    pp "What is the phone number you want the code to send a text message to?"
+    user_sms_number=gets.chomp  
+    pp "What do you want to write in the message?"
+    user_sms_message=gets.chomp 
+    qrcode=RQRCode::QRCode.new("SMSTO:"+ user_sms_number + ":" + user_sms_message)
+  else pp "Didn't recognize that selection. Please try again"
+  end
+  pp "What would you like to call the PNG?"
+  user_png_name=gets.chomp  
+  png=qrcode.as_png({:size => 500})
+IO.binwrite(user_png_name, png.to_s)
+end
